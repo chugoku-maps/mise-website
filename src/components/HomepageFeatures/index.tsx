@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import watashitachiLogo from '@site/static/img/watashitachi-logo.png';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  Svg?: React.ComponentType<React.ComponentProps<'svg'>>;
+  imageSrc?: string;
   description: JSX.Element;
   link: string;
 };
@@ -12,7 +14,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'わたしたちの広島3年,4年',
-    Svg: require('@site/static/img/watashitatchi-logo.svg').default,
+    imageSrc: watashitachiLogo,
     description: (
       <>
         昭和32年（1957）に前身の『生産県をめざすわが郷土広島県』が創刊されました。現在は、広島市の小学校3・4年生の郷土史学習のための「社会科副読本」として採択されています。
@@ -42,17 +44,25 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, Svg, description, link}: FeatureItem) {
+function Feature({title, Svg, imageSrc, description, link}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
+      <div className={styles.featureMedia}>
         <a href={link} className={styles.featureLink}>
-          <Svg className={styles.featureSvg} role="img" />
+          {imageSrc ? (
+            <img
+              src={imageSrc}
+              alt={title}
+              className={styles.featureImage}
+            />
+          ) : (
+            Svg && <Svg className={styles.featureSvg} role="img" />
+          )}
         </a>
       </div>
       <div className="text--center padding-horiz--md">
         <a href={link} className={styles.featureLink}>
-          <Heading as="h3">{title}</Heading>
+          <Heading as="h3" className={styles.featureTitle}>{title}</Heading>
         </a>
         <p>{description}</p>
        </div>
