@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
 function BlogFeedComponent() {
   const [blogFeed, setBlogFeed] = useState(null);
   const [loading, setLoading] = useState(true);
+  const feedUrl = useBaseUrl('/feed.json');
 
   useEffect(() => {
-    const url = './blog/feed.json';
-
-    fetch(url)
+    fetch(feedUrl)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -23,7 +23,7 @@ function BlogFeedComponent() {
         console.error('Error loading blog feed:', error);
         setLoading(false);
       });
-  }, []);
+  }, [feedUrl]);
 
   if (loading) {
     return <div>Loading...</div>;
