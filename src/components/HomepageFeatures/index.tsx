@@ -7,7 +7,7 @@ type FeatureItem = {
   title: string;
   Svg?: React.ComponentType<React.ComponentProps<'svg'>>;
   imageSrc?: string;
-  description: JSX.Element;
+  description: React.ReactNode;
   link: string;
 };
 
@@ -70,7 +70,7 @@ function Feature({title, Svg, imageSrc, description, link}: FeatureItem) {
   );
 }
 
-export default function HomepageFeatures(): JSX.Element {
+export default function HomepageFeatures(): React.ReactElement {
   return (
     <section className={styles.features}>
       <div className="container">
