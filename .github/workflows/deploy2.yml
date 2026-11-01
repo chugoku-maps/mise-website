@@ -12,6 +12,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+
 concurrency:
   group: sakura-production
   cancel-in-progress: false
@@ -22,9 +25,35 @@ jobs:
     if: ${{ inputs.pages_verified }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout main for commit validation
+        uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.commit_sha }}
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate and checkout the verified commit
+        shell: bash
+        env:
+          COMMIT_SHA: ${{ inputs.commit_sha }}
+        run: |
+          if [[ ! "$COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::commit_sha must be a full 40-character lowercase commit SHA."
+            exit 1
+          fi
+
+          if ! git cat-file -e "${COMMIT_SHA}^{commit}"; then
+            echo "::error::commit_sha does not identify a commit in this repository."
+            exit 1
+          fi
+
+          if ! git merge-base --is-ancestor "$COMMIT_SHA" origin/main; then
+            echo "::error::commit_sha must be a commit contained in main."
+            exit 1
+          fi
+
+          git checkout --detach "$COMMIT_SHA"
+
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
