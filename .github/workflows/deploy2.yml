@@ -1,16 +1,30 @@
 name: Deploy to Sakura server
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      pages_verified:
+        description: GitHub Pagesの表示を目視確認済み
+        required: true
+        type: boolean
+      commit_sha:
+        description: 目視確認したGitHub PagesデプロイのコミットSHA
+        required: true
+        type: string
+
+concurrency:
+  group: sakura-production
+  cancel-in-progress: false
 
 jobs:
   build:
-    name: Deploy
+    name: Deploy after Pages verification
+    if: ${{ inputs.pages_verified }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.commit_sha }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
